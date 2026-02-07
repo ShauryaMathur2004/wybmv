@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <title>Notes</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background:
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("bgg.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .room {
+      display: none;
+      text-align: center;
+      max-width: 420px;
+      padding: 25px;
+      border-radius: 14px;
+      background: rgba(20,20,30,0.85);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 25px rgba(255,105,180,0.25);
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .room.active {
+      display: block;
+      opacity: 1;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 22px;
+      background: hotpink;
+      color: black;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Carousel */
+    .carousel {
+      width: 100%;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .carousel-track {
+      display: flex;
+      width: max-content;
+      animation: slide 30s linear infinite;
+    }
+
+    .carousel img {
+      width: 220px;
+      margin-right: 16px;
+      border-radius: 12px;
+      opacity: 0.9;
+    }
+   
+
+
+    @keyframes slide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    #noBtn {
+      position: relative;
+    }
+
+    #doorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.door {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: #0f0f14;
+  transform: translateX(-100%);
+}
+
+.door.right {
+  right: 0;
+  transform: translateX(100%);
+}
+
+#doorOverlay.active .left {
+  animation: doorLeft 1.3s ease-in-out forwards;
+}
+
+#doorOverlay.active .right {
+  animation: doorRight 1.3s ease-in-out forwards;
+}
+
+@keyframes doorLeft {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes doorRight {
+  0% { transform: translateX(100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+@keyframes bloom {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+  </style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="room active" id="room0">
+  <h2>🔒 Escape Room</h2>
+  <p>• No Cheating</p>
+  <button onclick="nextRoom(1)">Start</button>
+</div>
+
+<!-- PUZZLE 1 -->
+<div class="room" id="room1">
+  <h2>🧠 Puzzle 1</h2>
+  <p>What cosmetic item did I apply for the first time on our first date?</p>
+  <input id="answer1" type="text" placeholder="i think you know it...or do you ?"
+    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+    onfocus="this.value=''"
+    style="padding:10px;border-radius:10px;border:none;width:80%;">
+  <button onclick="checkAnswer1()">Unlock</button>
+  <p id="feedback1"></p>
+</div>
+
+<!-- PUZZLE 2 -->
+<div class="room" id="room2">
+  <h2>🧩 Puzzle 2</h2>
+  <p>
+    • I made you like that khaane ki cheez<br>
+    • My first art & craft gift involved it<br>
+    • Our go-to gift
+  </p>
+  <input id="answer2" type="text" placeholder="one word..."
+    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+    onfocus="this.value=''"
+    style="padding:10px;border-radius:10px;border:none;width:80%;">
+  <button onclick="checkAnswer2()">Unlock</button>
+  <p id="feedback2"></p>
+</div>
+
+<!-- PUZZLE 3 -->
+<div class="room" id="room3">
+  <h2>🧩 Puzzle 3</h2>
+  <p>One of these feels right.</p>
+  <button onclick="wrongChoice()">Tum Ho</button>
+  <button onclick="wrongChoice()">Crazy Little Thing Called Love</button>
+  <button onclick="rightChoice()">Jiyein Kyu</button>
+  <button onclick="wrongChoice()">Kya Mujhe Pyaar Hai</button>
+  <p id="feedback3"></p>
+</div>
+
+<!-- CAROUSEL -->
+<div class="room" id="room4">
+  <h2>🖤 Before You Go</h2>
+  <p>You can solve the escape room , but my love has no exit ...lol cheesy lines do work</p>
+  <p style="opacity: 0.6;">🌹</p>
+  <div class="carousel">
+    <div class="carousel-track">
+      <img src="us1.jpg">
+      <img src="us2.jpg">
+      <img src="us3.jpg">
+      <img src="us4.jpg">
+      <img src="us5.jpg">
+    </div>
+  </div>
+  <p>Don’t rush.</p>
+</div>
+
+<!-- FINAL DOOR -->
+<div class="room" id="room5">
+  <h2>🚪 Exit Door</h2>
+  <p id="doorText">The door is locked.</p>
+  <button id="doorBtn" onclick="tryDoor()">Try the door</button>
+
+  <div id="valentineSection" style="display:none;">
+    <p id="jkText"></p>
+    <p>Will you be my Valentine? 🌹</p>
+    <div style="display:flex; gap:14px; justify-content:center;">
+      <button onclick="sayYes()">Yes ❤️</button>
+      <button id="noBtn">No 🙄</button>
+    </div>
+    <p id="finalMsg"></p>
+  </div>
+</div>
+<div class="room" id="room6">
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    <img 
+      src="rose.gif"
+      alt="Rose Day"
+      style="max-width:90%; border-radius:14px;"
+    >
+
+    <p style="margin-top:14px; opacity:0.85;">
+      Happy Rose Day besharam🌹
+    </p>
+  </div>
+</div>
+
+
+<script>
+function nextRoom(n) {
+  const overlay = document.getElementById("doorOverlay");
+  const current = document.querySelector(".room.active");
+
+  overlay.classList.add("active");
+
+  if (current) {
+    current.classList.remove("active");
+  }
+
+  setTimeout(() => {
+    document.getElementById("room" + n).classList.add("active");
+  }, 1100);
+
+  setTimeout(() => {
+    overlay.classList.remove("active");
+  }, 2200);
+}
+
+
+function checkAnswer1() {
+  const ans = answer1.value.toLowerCase();
+  if (ans.includes("sunscreen")) {
+    feedback1.innerText = "Unlocked 😌";
+    setTimeout(() => nextRoom(2), 2200);
+  } else feedback1.innerText = "besharam kahi ki";
+}
+
+function checkAnswer2() {
+  const ans = answer2.value.toLowerCase();
+  if (ans === "nutties") {
+    feedback2.innerText = "That’s it ❤️";
+    setTimeout(() => nextRoom(3), 2500);
+  } else feedback2.innerText = "Soch thoda pyaar se 😌";
+}
+
+function wrongChoice() {
+  feedback3.innerText = "Hmm… not quite 😌";
+}
+
+function rightChoice() {
+  feedback3.innerText = "You always get this right ❤️";
+  setTimeout(() => {
+    nextRoom(4);
+    setTimeout(() => nextRoom(5), 14000);
+  }, 2000);
+}
+
+function tryDoor() {
+  doorBtn.disabled = true;
+  doorText.innerText = "🔒 Still locked...";
+  setTimeout(() => {
+    jkText.innerText = "Just kidding 😌 I’d never lock you out.";
+    valentineSection.style.display = "block";
+  }, 2000);
+}
+
+function sayYes() {
+  const msg = document.getElementById("finalMsg");
+
+  msg.innerText = "Hehe ❤️ Love you bebu.";
+  document.title = "❤️";
+
+  // Give her a second to read
+  setTimeout(() => {
+    nextRoom(6);
+  }, 2000);
+}
+
+
+
+
+
+
+
+const noBtn = document.getElementById("noBtn");
+if (noBtn) {
+  noBtn.addEventListener("mouseover", () => {
+    noBtn.style.transform =
+      `translate(${Math.random()*120-60}px, ${Math.random()*120-60}px)`;
+  });
+}
+</script>
+<div id="doorOverlay">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+</body>
+</html>
