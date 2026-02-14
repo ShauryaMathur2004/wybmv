@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes</title>
+
+<style>
+body{
+  margin:0;
+  background:#0f0f14;
+  color:white;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+}
+
+.room{
+  display:none;
+  text-align:center;
+  max-width:520px;
+  padding:30px;
+  opacity:0;
+  transition:opacity 1.2s ease;
+}
+
+.room.active{
+  display:block;
+  opacity:1;
+}
+
+button{
+  margin-top:20px;
+  padding:10px 25px;
+  border:none;
+  border-radius:25px;
+  background:hotpink;
+  color:black;
+  font-size:16px;
+  cursor:pointer;
+}
+
+#noBtn{
+  position:relative;
+  transition:opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Split door */
+#doorOverlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:9999;
+}
+
+.door{
+  position:absolute;
+  top:0;
+  width:50%;
+  height:100%;
+  background:#0f0f14;
+  transform:translateX(-100%);
+}
+
+.door.right{
+  right:0;
+  transform:translateX(100%);
+}
+
+#doorOverlay.active .left{
+  animation:doorLeft 1.4s ease-in-out forwards;
+}
+#doorOverlay.active .right{
+  animation:doorRight 1.4s ease-in-out forwards;
+}
+
+@keyframes doorLeft{
+  0%{transform:translateX(-100%);}
+  50%{transform:translateX(0);}
+  100%{transform:translateX(-100%);}
+}
+
+@keyframes doorRight{
+  0%{transform:translateX(100%);}
+  50%{transform:translateX(0);}
+  100%{transform:translateX(100%);}
+}
+
+/* Rose full screen */
+#roseScreen{
+  background:#000;
+}
+
+#roseScreen img{
+  max-width:90%;
+  border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="doorOverlay">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+<!-- ROOM 0 -->
+<div class="room active" id="room0">
+  <h2>We need to talk.</h2>
+  <button onclick="goToRoom1()">Continue</button>
+</div>
+
+<!-- ROOM 1 -->
+<div class="room" id="room1">
+  <p id="phase1"></p>
+</div>
+
+<!-- ROOM 2 -->
+<div class="room" id="room2">
+  <p id="phase2"></p>
+</div>
+
+<!-- ROOM 3 -->
+<div class="room" id="room3">
+  <h2>I want you.</h2>
+  <p>Not casually.<br>Not temporarily.<br>Not "let's see".</p>
+  <p style="margin-top:15px;">I want you as my Valentine.</p>
+
+  <div>
+    <button onclick="sayYes()">Yes ❤️</button>
+    <button id="noBtn">No</button>
+  </div>
+</div>
+
+<!-- ROSE SCREEN -->
+<div class="room" id="roseScreen">
+  <img src="20240405_180620.jpg">
+  <p style="margin-top:15px;">You are the only version that made sense 🌹</p>
+</div>
+
+<script>
+
+function nextRoom(id){
+  const overlay=document.getElementById("doorOverlay");
+  const current=document.querySelector(".room.active");
+
+  overlay.classList.add("active");
+
+  if(current) current.classList.remove("active");
+
+  setTimeout(()=>{
+    document.getElementById(id).classList.add("active");
+  },1400);
+
+  setTimeout(()=>{
+    overlay.classList.remove("active");
+  },2600);
+}
+
+/* ROOM FLOW */
+
+function goToRoom1(){
+  nextRoom("room1");
+  setTimeout(startPhase1, 1800);
+}
+
+function startPhase1(){
+  const text=document.getElementById("phase1");
+  text.innerHTML="I've been thinking.";
+
+  setTimeout(()=>{
+    text.innerHTML+="<br><br>About what this is.";
+  },3000);
+
+  setTimeout(()=>{
+    text.innerHTML+="<br><br>And what it could be.";
+  },6500);
+
+  setTimeout(()=>{
+    nextRoom("room2");
+    setTimeout(startPhase2,1800);
+  },10000);
+}
+
+function startPhase2(){
+  const text=document.getElementById("phase2");
+  text.innerHTML="I tried imagining it ending.";
+
+  setTimeout(()=>{
+    text.innerHTML+="<br><br>I didn’t like that version.";
+  },3500);
+
+  setTimeout(()=>{
+    text.innerHTML+="<br><br>So I ran another one.";
+  },7500);
+
+  setTimeout(()=>{
+    nextRoom("room3");
+  },11500);
+}
+
+/* NO button dissolve */
+const noBtn=document.getElementById("noBtn");
+noBtn.addEventListener("mouseover",()=>{
+  noBtn.style.opacity="0";
+  noBtn.style.transform="scale(0.6)";
+});
+
+/* YES */
+function sayYes(){
+  setTimeout(()=>{
+    nextRoom("roseScreen");
+  },1500);
+}
+
+</script>
+
+</body>
+</html>
